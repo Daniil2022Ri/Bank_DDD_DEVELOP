@@ -1,0 +1,46 @@
+server:
+  port: 8087
+#  servlet:
+#    context-path: /api/authorization
+management:
+  server:
+    port: 8187
+  endpoint:
+    shutdown:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/postgres
+    username: postgres
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+  liquibase:
+    default-schema: authorization
+    change-log: db/changelog/db.changelog-master.yaml
+    enabled: true
+    drop-first: false
+  application:
+    name: authorization-app
+  kafka:
+    bootstrap-servers: kafka:9092
+    properties:
+      auto.create.topics.enable: true
+      listener:
+        missing-topics-fatal: false
+    consumer:
+      group-id: users-group
+      properties:
+        spring.json.trusted.packages: com.bank.authorization.dtos.events
+    producer:
+      acks: 1
+jwt:
+  secret: ${JWT_SECRET}
+  lifetime: 1800s

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authorization-app
+  namespace: authorization
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authorization-app
+  template:
+    metadata:
+      labels:
+        app: authorization-app
+    spec:
+      containers:
+        - name: authorization-app
+          image: dkmplis/authorization-module:latest
+          ports:
+            - containerPort: 8087
+            - containerPort: 8187
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "k8s"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/postgres"
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: authorization-secret
+                  key: db-password
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: authorization-secret
+                  key: jwt-secret
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8187
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8187
+            initialDelaySeconds: 15
+            periodSeconds: 5

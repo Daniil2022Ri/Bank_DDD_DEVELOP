@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: account-config
+  namespace: account
+  labels:
+    app: account-service
+data:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/postgres
+  SPRING_LIQUIBASE_CHANGE_LOG: db.changelog/db.changelog-master.yaml
+  SPRING_LIQUIBASE_ENABLED: "true"
+  SPRING_LIQUIBASE_DROP_FIRST: "false"
+  SPRING_APPLICATION_NAME: account-app
+  SERVER_PORT: "8085"
+  SERVER_SERVLET_CONTEXT_PATH: /api/account
+  MANAGEMENT_SERVER_PORT: "8185"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
+  SWAGGER_SERVER_URL: http://account.local/api/account
+  SWAGGER_SERVER_DESCRIPTION: "Kubernetes Environment"
+
