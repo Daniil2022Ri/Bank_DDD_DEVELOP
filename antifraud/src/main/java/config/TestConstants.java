@@ -26,4 +26,13 @@ public class TestConstants {
 
     public static final String LOG_PART_BLOCKED_TRUE = ApplicationConstant.MSG_BLOCKED + "true";
     public static final String LOG_PART_SUSPICIOUS_TRUE = ApplicationConstant.MSG_SUSPICIOUS + "true";
+
+    public static final String CARD = "card";
+    public static final String CREATE_CARD = "createCard";
+    public static final String GET_CARD_BY_ID = "getCardById";
+    public static final String DATABASE_ERROR = "Database connection error";
+    public static final String AUDIT_SERVICE = "auditService";
+    public static final String FAILED_INJECT_AUDIT_SERVICE = "Failed to inject auditService";
+
+
 }

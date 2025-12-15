@@ -3,21 +3,32 @@ package Unit;
 import dto.SuspiciousAccountTransferDto;
 import dto.SuspiciousCardTransferDto;
 import dto.SuspiciousPhoneTransferDto;
-import mappers.SuspiciousTransferMapper;
-import mappers.SuspiciousTransferMapperImpl;
+import mappers.SuspiciousAccountTransferMapper;
+import mappers.SuspiciousCardTransferMapper;
+import mappers.SuspiciousPhoneTransferMapper;
 import model.SuspiciousAccountTransfer;
 import model.SuspiciousCardTransfer;
 import model.SuspiciousPhoneTransfer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
+@SpringBootTest
 class SuspiciousTransferMapperTest {
 
-    private final SuspiciousTransferMapper mapper;
+    @Autowired
+    private SuspiciousCardTransferMapper cardMapper;
+
+    @Autowired
+    private SuspiciousPhoneTransferMapper phoneMapper;
+
+    @Autowired
+    private SuspiciousAccountTransferMapper accountMapper;
 
     private final Long TEST_ID = 1L;
     private final boolean BLOCKED_TRUE = true;
@@ -29,7 +40,7 @@ class SuspiciousTransferMapperTest {
     void toCardEntity_WithValidDto_ShouldReturnEntity() {
         SuspiciousCardTransferDto dto = createTestCardDto();
 
-        SuspiciousCardTransfer entity = mapper.toCardEntity(dto);
+        SuspiciousCardTransfer entity = cardMapper.toEntity(dto);
 
         assertNotNull(entity);
         assertEquals(dto.getId(), entity.getId());
@@ -43,7 +54,7 @@ class SuspiciousTransferMapperTest {
     void toCardDto_WithValidEntity_ShouldReturnDto() {
         SuspiciousCardTransfer entity = createTestCardEntity();
 
-        SuspiciousCardTransferDto dto = mapper.toCardDto(entity);
+        SuspiciousCardTransferDto dto = cardMapper.toDto(entity);
 
         assertNotNull(dto);
         assertEquals(entity.getId(), dto.getId());
@@ -57,7 +68,7 @@ class SuspiciousTransferMapperTest {
     void toPhoneEntity_WithValidDto_ShouldReturnEntity() {
         SuspiciousPhoneTransferDto dto = createTestPhoneDto();
 
-        SuspiciousPhoneTransfer entity = mapper.toPhoneEntity(dto);
+        SuspiciousPhoneTransfer entity = phoneMapper.toEntity(dto);
 
         assertNotNull(entity);
         assertEquals(dto.getId(), entity.getId());
@@ -71,7 +82,7 @@ class SuspiciousTransferMapperTest {
     void toPhoneDto_WithValidEntity_ShouldReturnDto() {
         SuspiciousPhoneTransfer entity = createTestPhoneEntity();
 
-        SuspiciousPhoneTransferDto dto = mapper.toPhoneDto(entity);
+        SuspiciousPhoneTransferDto dto = phoneMapper.toDto(entity);
 
         assertNotNull(dto);
         assertEquals(entity.getId(), dto.getId());
@@ -85,7 +96,7 @@ class SuspiciousTransferMapperTest {
     void toAccountEntity_WithValidDto_ShouldReturnEntity() {
         SuspiciousAccountTransferDto dto = createTestAccountDto();
 
-        SuspiciousAccountTransfer entity = mapper.toAccountEntity(dto);
+        SuspiciousAccountTransfer entity = accountMapper.toEntity(dto);
 
         assertNotNull(entity);
         assertEquals(dto.getId(), entity.getId());
@@ -99,7 +110,7 @@ class SuspiciousTransferMapperTest {
     void toAccountDto_WithValidEntity_ShouldReturnDto() {
         SuspiciousAccountTransfer entity = createTestAccountEntity();
 
-        SuspiciousAccountTransferDto dto = mapper.toAccountDto(entity);
+        SuspiciousAccountTransferDto dto = accountMapper.toDto(entity);
 
         assertNotNull(dto);
         assertEquals(entity.getId(), dto.getId());
@@ -107,6 +118,24 @@ class SuspiciousTransferMapperTest {
         assertEquals(entity.isSuspicious(), dto.isSuspicious());
         assertEquals(entity.getBlockedReason(), dto.getBlockedReason());
         assertEquals(entity.getSuspiciousReason(), dto.getSuspiciousReason());
+    }
+
+    @Test
+    void testCardMapper_NullSafety() {
+        assertNull(cardMapper.toDto(null));
+        assertNull(cardMapper.toEntity(null));
+    }
+
+    @Test
+    void testPhoneMapper_NullSafety() {
+        assertNull(phoneMapper.toDto(null));
+        assertNull(phoneMapper.toEntity(null));
+    }
+
+    @Test
+    void testAccountMapper_NullSafety() {
+        assertNull(accountMapper.toDto(null));
+        assertNull(accountMapper.toEntity(null));
     }
 
     private SuspiciousCardTransferDto createTestCardDto() {
