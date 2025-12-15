@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: antifraud-config
+  namespace: antifraud
+data:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-service.antifraud.svc.cluster.local:5432/postgres
+  SPRING_LIQUIBASE_CHANGE_LOG: db.changelog/db.changelog-master.yaml
+  SPRING_LIQUIBASE_ENABLED: "true"
+  SPRING_LIQUIBASE_DROP_FIRST: "false"
+  SPRING_APPLICATION_NAME: antifraud-app
+  SERVER_PORT: "8086"
+  SERVER_SERVLET_CONTEXT_PATH: /api/anti-fraud
+  MANAGEMENT_SERVER_PORT: "8186"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
+  SWAGGER_SERVER_URL: http://antifraud.local/api/antifraud
+  SWAGGER_SERVER_DESCRIPTION: "Kubernetes Environment"

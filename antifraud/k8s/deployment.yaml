@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: antifraud-deployment
+  namespace: antifraud
+  labels:
+    app: antifraud
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: antifraud
+  template:
+    metadata:
+      labels:
+        app: antifraud
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8186"
+        prometheus.io/path: "/api/anti-fraud/actuator/prometheus"
+    spec:
+      containers:
+        - name: antifraud
+          image: your-registry/antifraud:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8086
+              name: http-app
+            - containerPort: 8186
+              name: http-mgmt
+          env:
+
+            - name: SPRING_PROFILES_ACTIVE
+              value: "k8s"
+
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: antifraud-secrets
+                  key: DB_PASSWORD
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: antifraud-secrets
+                  key: DB_USERNAME
+            - name: DB_HOST
+              value: "postgres-service.antifraud.svc.cluster.local"
+
+
+            - name: SPRING_CONFIG_IMPORT
+              value: "optional:configmap:antifraud-config[application-k8s.yaml]"
+
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config
+              readOnly: true
+
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+
+
+          livenessProbe:
+            httpGet:
+              path: /api/anti-fraud/actuator/health/liveness
+              port: 8086
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /api/anti-fraud/actuator/health/readiness
+              port: 8086
+            initialDelaySeconds: 60
+            periodSeconds: 5
+            timeoutSeconds: 3
+
+
+          startupProbe:
+            httpGet:
+              path: /api/anti-fraud/actuator/health/startup
+              port: 8086
+            failureThreshold: 30
+            periodSeconds: 10
+
+      volumes:
+        - name: config-volume
+          configMap:
+            name: antifraud-config
+            items:
+              - key: application-k8s.yaml
+                path: application.yaml
