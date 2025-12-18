@@ -46,7 +46,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AuditAspectTest {
 
-    @Spy
+    @Mock
     private TestableAuditAspect auditAspect;
 
     @Mock private SuspiciousCardTransferRepository cardRepo;

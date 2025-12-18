@@ -1,5 +1,6 @@
 package service;
 
+import AOP.TestableAuditAspect;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dto.AuditDto;
@@ -16,6 +17,7 @@ import service.util.AuditBuilder;
 @RequiredArgsConstructor
 public class AuditServiceImpl implements AuditService {
 
+    private final TestableAuditAspect testableAuditAspect;
     private final AuditRepository auditRepository;
     private final AuditBuilder auditBuilder;
 
@@ -24,9 +26,9 @@ public class AuditServiceImpl implements AuditService {
         try {
             Audit audit = auditBuilder.buildCreateAudit(entityType, newEntity, username);
             auditRepository.save(audit);
-            log.info("Аудит создания сохранен: {}", entityType);
+            testableAuditAspect.info("Аудит создания сохранен: {}", entityType);
         } catch (Exception e) {
-            log.error("Ошибка при сохранении аудита создания: {}", e.getMessage());
+            testableAuditAspect.error("Ошибка при сохранении аудита создания: {}", e.getMessage());
         }
     }
 
@@ -35,9 +37,9 @@ public class AuditServiceImpl implements AuditService {
         try {
             Audit audit = auditBuilder.buildUpdateAudit(entityType, oldEntity, newEntity, username);
             auditRepository.save(audit);
-            log.info("Аудит обновления сохранен: {}", entityType);
+            testableAuditAspect.info("Аудит обновления сохранен: {}", entityType);
         } catch (Exception e) {
-            log.error("Ошибка при сохранении аудита обновления: {}", e.getMessage());
+            testableAuditAspect.error("Ошибка при сохранении аудита обновления: {}", e.getMessage());
         }
     }
 
@@ -46,9 +48,9 @@ public class AuditServiceImpl implements AuditService {
         try {
             Audit audit = auditBuilder.buildDeleteAudit(entityType, entityId, username);
             auditRepository.save(audit);
-            log.info("Аудит удаления сохранен: {} ID: {}", entityType, entityId);
+            testableAuditAspect.info("Аудит удаления сохранен: {} ID: {}", entityType, entityId);
         } catch (Exception e) {
-            log.error("Ошибка при сохранении аудита удаления: {}", e.getMessage());
+            testableAuditAspect.error("Ошибка при сохранении аудита удаления: {}", e.getMessage());
         }
     }
 }

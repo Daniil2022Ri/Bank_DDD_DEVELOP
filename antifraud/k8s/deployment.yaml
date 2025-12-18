@@ -26,7 +26,7 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8186"
-        prometheus.io/path: "/api/anti-fraud/actuator/prometheus"
+        prometheus.io/path: "/actuator/prometheus"
     spec:
       containers:
         - name: anti-fraud-app
@@ -38,11 +38,10 @@ spec:
             - containerPort: 8186
               name: management
           env:
+            - name: SPRING_CONFIG_ADDITIONAL_LOCATION
+              value: "file:/app/config/"
             - name: SPRING_PROFILES_ACTIVE
-              valueFrom:
-                secretKeyRef:
-                  name: anti-fraud-secrets
-                  key: SPRING_PROFILES_ACTIVE
+              value: "k8s"
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -54,16 +53,13 @@ spec:
                   name: anti-fraud-secrets
                   key: DB_PASSWORD
             - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: anti-fraud-secrets
-                  key: DB_NAME
+              value: "anti_fraud"
             - name: DB_HOST
-              value: postgres-svc
+              value: "postgres-svc"
             - name: DB_PORT
               value: "5432"
             - name: JAVA_OPTS
-              value: "-Xms512m -Xmx1024m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+HeapDumpOnOutOfMemoryError"
+              value: "-Xms512m -Xmx1024m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/./urandom"
           resources:
             requests:
               memory: "512Mi"
@@ -108,4 +104,7 @@ spec:
         - name: config-volume
           configMap:
             name: anti-fraud-config
+            items:
+              - key: application-k8s.yaml
+                path: application-k8s.yaml
       restartPolicy: Always

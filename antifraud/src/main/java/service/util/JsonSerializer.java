@@ -1,5 +1,6 @@
 package service.util;
 
+import AOP.TestableAuditAspect;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -9,10 +10,12 @@ import org.springframework.stereotype.Component;
 import static config.ApplicationConstant.AUDIT_SERIALIZATION_ERROR;
 
 
-@Slf4j
+
 @Component
 @RequiredArgsConstructor
 public class JsonSerializer {
+
+    private final TestableAuditAspect testableAuditAspect;
 
     private final ObjectMapper objectMapper;
 
@@ -21,7 +24,7 @@ public class JsonSerializer {
         try {
             return objectMapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            log.warn("Ошибка сериализации: {}", e.getMessage());
+            testableAuditAspect.warn("Ошибка сериализации: {}", e.getMessage());
             return AUDIT_SERIALIZATION_ERROR;
         }
     }

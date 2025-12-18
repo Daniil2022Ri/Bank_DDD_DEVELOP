@@ -3,11 +3,15 @@ package AOP;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import service.AuditService;
 import java.util.HashMap;
@@ -63,11 +67,18 @@ import static config.ApplicationConstant.LOG_ERROR_OLD_ENTITY;
 
 @Aspect
 @Component
-@Slf4j
-@RequiredArgsConstructor
+
+
 public class AuditAspect {
 
-    private final AuditService auditService;
+    private static final Logger log = LoggerFactory.getLogger(AuditAspect.class);
+
+    private  AuditService auditService;
+
+    @Autowired
+    public void setAuditService(AuditService auditService) {
+        this.auditService = auditService;
+    }
 
     private final ThreadLocal<Map<String, Object>> oldEntityCache =
             ThreadLocal.withInitial(HashMap::new);
@@ -80,7 +91,7 @@ public class AuditAspect {
             String username = getCurrentUsername();
 
             auditService.logCreate(entityType, result, username);
-
+            org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
             log.info(MSG_CREATED, entityType, methodName, extractSuspiciousDetails(result));
         } catch (Exception e) {
             log.error(MSG_ERR_ASPECT_CREATE, joinPoint.getSignature().getName(), e);

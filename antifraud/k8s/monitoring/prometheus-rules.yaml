@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-rules
+  namespace: monitoring
+data:
+  app-rules.yml: |
+    groups:
+      - name: anti-fraud-app
+        rules:
+          - alert: HighErrorRate
+            expr: |
+              rate(http_server_requests_seconds_count{status=~"5..", namespace="anti-fraud"}[5m]) 
+              / rate(http_server_requests_seconds_count{namespace="anti-fraud"}[5m]) > 0.05
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High error rate in Anti-Fraud application"
+              description: "Error rate is {{ $value }} for service {{ $labels.service }}"
+
+          - alert: HighLatency
+            expr: |
+              histogram_quantile(0.95, 
+                rate(http_server_requests_seconds_bucket{namespace="anti-fraud"}[5m])
+              ) > 2
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High latency in Anti-Fraud application"
+              description: "95th percentile latency is {{ $value }}s"
+
+          - alert: PodRestarted
+            expr: |
+              changes(kube_pod_container_status_restarts_total{namespace="anti-fraud"}[15m]) > 2
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Pod {{ $labels.pod }} has restarted multiple times"
+
+          - alert: HighCPUUsage
+            expr: |
+              rate(container_cpu_usage_seconds_total{namespace="anti-fraud"}[5m]) * 100 > 80
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High CPU usage in {{ $labels.pod }}"
+              description: "CPU usage is {{ $value }}%"
+
+          - alert: HighMemoryUsage
+            expr: |
+              container_memory_working_set_bytes{namespace="anti-fraud"} 
+              / container_spec_memory_limit_bytes{namespace="anti-fraud"} > 0.8
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High memory usage in {{ $labels.pod }}"
+              description: "Memory usage is {{ $value }}% of limit"
+
+      - name: kubernetes
+        rules:
+          - alert: NodeDown
+            expr: up{job="kubernetes-nodes"} == 0
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Node {{ $labels.instance }} is down"

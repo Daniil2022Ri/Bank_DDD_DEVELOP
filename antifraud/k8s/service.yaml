@@ -5,9 +5,12 @@ metadata:
   namespace: anti-fraud
   labels:
     app: anti-fraud
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8186"
 spec:
   selector:
     app: anti-fraud
+    version: v1
   ports:
     - name: http
       port: 80
