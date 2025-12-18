@@ -197,4 +197,5 @@ class SuspiciousTransferMapperTest {
                 .suspiciousReason(SUSPICIOUS_REASON)
                 .build();
     }
+
 }

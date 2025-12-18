@@ -1,21 +1,29 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: antifraud-ingress
-  namespace: antifraud
+  name: anti-fraud-ingress
+  namespace: anti-fraud
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - anti-fraud.your-domain.com
+      secretName: anti-fraud-tls
   rules:
-    - host: antifraud.example.com
+    - host: anti-fraud.your-domain.com
       http:
         paths:
-          - path: /
+          - path: /api/anti-fraud(/|$)(.*)
             pathType: Prefix
             backend:
               service:
-                name: antifraud-service
+                name: anti-fraud-service
                 port:
                   number: 80

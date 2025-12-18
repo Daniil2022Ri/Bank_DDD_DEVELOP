@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: anti-fraud
+data:
+  POSTGRES_DB: anti_fraud
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres-password-123
+  init.sql: |
+    CREATE SCHEMA IF NOT EXISTS anti_fraud;

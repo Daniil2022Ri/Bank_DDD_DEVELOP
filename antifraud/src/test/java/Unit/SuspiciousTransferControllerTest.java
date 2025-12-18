@@ -153,4 +153,5 @@ class SuspiciousTransferControllerTest {
                 .suspiciousReason(TestConstants.REASON_SUSPICIOUS)
                 .build();
     }
+
 }

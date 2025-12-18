@@ -298,4 +298,5 @@ class SuspiciousTransferServiceImplTest {
                 .suspiciousReason(TestConstants.REASON_SUSPICIOUS)
                 .build();
     }
+
 }

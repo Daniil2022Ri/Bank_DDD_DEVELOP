@@ -1,13 +1,20 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: antifraud-service
-  namespace: antifraud
+  name: anti-fraud-service
+  namespace: anti-fraud
+  labels:
+    app: anti-fraud
 spec:
   selector:
-    app: antifraud
+    app: anti-fraud
   ports:
-    - port: 80
+    - name: http
+      port: 80
       targetPort: 8086
-      name: http
+      protocol: TCP
+    - name: management
+      port: 8186
+      targetPort: 8186
+      protocol: TCP
   type: ClusterIP
