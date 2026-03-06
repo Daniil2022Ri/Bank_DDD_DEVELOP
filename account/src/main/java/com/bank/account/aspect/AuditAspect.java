@@ -38,6 +38,8 @@ public class AuditAspect {
 
                 log.info(constants.AUDIT_LOGGED_FORMAT,
                         methodName, account.getId());
+            }else if(result != null){
+                log.warn("Unexpected result type in audit aspect: {}", result.getClass().getName());
             }
         } catch (Exception e) {
             log.error(constants.AUDIT_ERROR_FORMAT, e.getMessage(), e);

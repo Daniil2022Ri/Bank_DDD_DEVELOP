@@ -36,7 +36,6 @@ public class AccountEntity {
     private Integer bankDetailsId;
 
     @Column(name = "money", precision = 15, scale = 2)
-    @PositiveOrZero(message = ApplicationConstants.ERROR_MONEY_NEGATIVE)
     private BigDecimal money;
 
     @Column(name = "negative_balance")

@@ -14,7 +14,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -35,8 +42,6 @@ class AccountServiceImplTest {
     @Mock
     private AccountMapper accountMapper;
 
-    @Mock
-    private ApplicationConstants constants;
 
     @InjectMocks
     private AccountServiceImpl accountService;
@@ -70,13 +75,43 @@ class AccountServiceImplTest {
     }
 
     @Test
+    void update_ShouldUpdateAccount_WhenValidData() {
+        AccountDto inputDto = createTestAccountDto();
+        inputDto.setAccountNumber(999999); // новый номер
+        AccountEntity existingEntity = createTestAccountEntity();
+
+        when(accountRepository.findById(TEST_ACCOUNT_ID)).thenReturn(Optional.of(existingEntity));
+        when(accountRepository.existsByAccountNumber(999999)).thenReturn(false);
+        when(accountRepository.save(any(AccountEntity.class))).thenReturn(existingEntity);
+        when(accountMapper.toDto(any(AccountEntity.class))).thenReturn(inputDto);
+
+        AccountDto result = accountService.update(TEST_ACCOUNT_ID, inputDto);
+
+        assertNotNull(result);
+        verify(accountRepository).save(existingEntity);
+    }
+
+    @Test
+    void update_ShouldThrowException_WhenAccountNumberExists() {
+        AccountDto inputDto = createTestAccountDto();
+        inputDto.setAccountNumber(999999); // новый номер
+        AccountEntity existingEntity = createTestAccountEntity();
+        existingEntity.setAccountNumber(111111); // старый номер отличается
+
+        when(accountRepository.findById(TEST_ACCOUNT_ID)).thenReturn(Optional.of(existingEntity));
+        when(accountRepository.existsByAccountNumber(999999)).thenReturn(true);
+
+        assertThrows(IllegalArgumentException.class, () -> accountService.update(TEST_ACCOUNT_ID, inputDto));
+    }
+
+    @Test
     void findById_ShouldReturnAccount_WhenExists() {
         AccountEntity entity = createTestAccountEntity();
         AccountDto expectedDto = createTestAccountDto();
 
         when(accountRepository.findById(TEST_ACCOUNT_ID)).thenReturn(Optional.of(entity));
         when(accountMapper.toDto(entity)).thenReturn(expectedDto);
-        when(constants.ENTITY_NAME_ACCOUNT).thenReturn(TEST_ENTITY_NAME);
+
 
         AccountDto result = accountService.findById(TEST_ACCOUNT_ID);
 
@@ -87,7 +122,7 @@ class AccountServiceImplTest {
     @Test
     void findById_ShouldThrowException_WhenNotFound() {
         when(accountRepository.findById(TEST_ACCOUNT_ID)).thenReturn(Optional.empty());
-        when(constants.ENTITY_NAME_ACCOUNT).thenReturn(TEST_ENTITY_NAME);
+
 
         assertThrows(EntityNotFoundException.class, () -> accountService.findById(TEST_ACCOUNT_ID));
     }
@@ -99,7 +134,7 @@ class AccountServiceImplTest {
 
         when(accountRepository.findByAccountNumber(TEST_ACCOUNT_NUMBER)).thenReturn(Optional.of(entity));
         when(accountMapper.toDto(entity)).thenReturn(expectedDto);
-        when(constants.ENTITY_NAME_ACCOUNT).thenReturn(TEST_ENTITY_NAME);
+
 
         AccountDto result = accountService.findByAccountNumber(TEST_ACCOUNT_NUMBER);
 
@@ -114,7 +149,7 @@ class AccountServiceImplTest {
 
         when(accountRepository.findByProfileId(TEST_PROFILE_ID)).thenReturn(Optional.of(entity));
         when(accountMapper.toDto(entity)).thenReturn(expectedDto);
-        when(constants.ENTITY_NAME_ACCOUNT).thenReturn(TEST_ENTITY_NAME);
+
 
         AccountDto result = accountService.findByProfileId(TEST_PROFILE_ID);
 
@@ -145,7 +180,7 @@ class AccountServiceImplTest {
     @Test
     void delete_ShouldDeleteAccount_WhenExists() {
         when(accountRepository.existsById(TEST_ACCOUNT_ID)).thenReturn(true);
-        when(constants.ENTITY_NAME_ACCOUNT).thenReturn(TEST_ENTITY_NAME);
+
 
         accountService.delete(TEST_ACCOUNT_ID);
 
@@ -155,7 +190,7 @@ class AccountServiceImplTest {
     @Test
     void delete_ShouldThrowException_WhenNotFound() {
         when(accountRepository.existsById(TEST_ACCOUNT_ID)).thenReturn(false);
-        when(constants.ENTITY_NAME_ACCOUNT).thenReturn(TEST_ENTITY_NAME);
+
 
         assertThrows(EntityNotFoundException.class, () -> accountService.delete(TEST_ACCOUNT_ID));
         verify(accountRepository, never()).deleteById(anyLong());

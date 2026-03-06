@@ -23,7 +23,6 @@ class CurrentUserServiceImplTest {
 
     @Test
     void getCurrentUser_ShouldReturnSystemUser() {
-        when(applicationConstants.DEFAULT_SYSTEM_USER).thenReturn(TEST_SYSTEM_USER);
 
         String result = currentUserService.getCurrentUser();
 

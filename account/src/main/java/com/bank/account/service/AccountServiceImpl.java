@@ -19,7 +19,7 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
-    private final ApplicationConstants constants;
+
 
     @Override
     @Transactional
@@ -44,11 +44,11 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public AccountDto update(Long id, AccountDto accountDto) {
         log.info("Updating account with ID: {}", id);
-
+        accountDto.setId(id);
         AccountEntity existingAccount = accountRepository.findById(id)
                 .orElseThrow(() -> {
                     log.error("Account with ID {} not found for update", id);
-                    return new EntityNotFoundException(constants.ENTITY_NAME_ACCOUNT, id);
+                    return new EntityNotFoundException(ApplicationConstants.ENTITY_NAME_ACCOUNT, id);
                 });
 
         if (!existingAccount.getAccountNumber().equals(accountDto.getAccountNumber()) &&
@@ -80,7 +80,7 @@ public class AccountServiceImpl implements AccountService {
         AccountEntity account = accountRepository.findById(id)
                 .orElseThrow(() -> {
                     log.error("Account with ID {} not found", id);
-                    return new EntityNotFoundException(constants.ENTITY_NAME_ACCOUNT, id);
+                    return new EntityNotFoundException(ApplicationConstants.ENTITY_NAME_ACCOUNT, id);
                 });
 
         return accountMapper.toDto(account);
@@ -94,7 +94,7 @@ public class AccountServiceImpl implements AccountService {
         AccountEntity account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> {
                     log.error("Account with account number {} not found", accountNumber);
-                    return new EntityNotFoundException(constants.ENTITY_NAME_ACCOUNT, "accountNumber", accountNumber);
+                    return new EntityNotFoundException(ApplicationConstants.ENTITY_NAME_ACCOUNT, "accountNumber", accountNumber);
                 });
 
         return accountMapper.toDto(account);
@@ -108,7 +108,7 @@ public class AccountServiceImpl implements AccountService {
         AccountEntity account = accountRepository.findByProfileId(profileId)
                 .orElseThrow(() -> {
                     log.error("Account with profile ID {} not found", profileId);
-                    return new EntityNotFoundException(constants.ENTITY_NAME_ACCOUNT, "profileId", profileId);
+                    return new EntityNotFoundException(ApplicationConstants.ENTITY_NAME_ACCOUNT, "profileId", profileId);
                 });
 
         return accountMapper.toDto(account);
@@ -132,7 +132,7 @@ public class AccountServiceImpl implements AccountService {
 
         if (!accountRepository.existsById(id)) {
             log.error("Account with ID {} not found for deletion", id);
-            throw new EntityNotFoundException(constants.ENTITY_NAME_ACCOUNT, id);
+            throw new EntityNotFoundException(ApplicationConstants.ENTITY_NAME_ACCOUNT, id);
         }
 
         accountRepository.deleteById(id);

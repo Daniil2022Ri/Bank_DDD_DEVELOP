@@ -1,11 +1,12 @@
 package com.bank.account.util;
 
+
 import org.springframework.stereotype.Component;
 
-@Component
+
 public class ApplicationConstants {
 
-    public static final String ENTITY_TYPE_ACCOUNT = "ACCOUNT";
+    public  final String ENTITY_TYPE_ACCOUNT = "ACCOUNT";
     public static final String ENTITY_NAME_ACCOUNT = "Account";
     public static final String HEALTH_STATUS_KEY = "status";
     public static final String HEALTH_SERVICE_KEY = "service";
@@ -46,7 +47,7 @@ public class ApplicationConstants {
     public static final String API_TAG_ACCOUNT = "Account Management";
     public static final String API_DESCRIPTION_ACCOUNT = "API для управления банковскими счетами";
 
-    private ApplicationConstants() {}
+    private ApplicationConstants() {throw new AssertionError("Utility class");}
 
     public String getErrorNotFound() {return ERROR_NOT_FOUND;}
     public String getErrorValidationFailed() {return ERROR_VALIDATION_FAILED;}

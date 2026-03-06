@@ -23,7 +23,8 @@ public class JsonUtil {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             log.error("Error converting object to JSON: {}", e.getMessage(), e);
-            return null;
+            throw new IllegalStateException("JSON serialization failed", e);
+
         }
     }
 
