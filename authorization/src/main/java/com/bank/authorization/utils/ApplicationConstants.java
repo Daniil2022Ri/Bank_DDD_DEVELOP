@@ -17,5 +17,7 @@ public final class ApplicationConstants {
     public static final String AUTHORIZATION = "AUTHORIZATION";
     public static final String CREATE_EVENT = "CREATE";
     public static final String UPDATE_EVENT = "UPDATE";
+    public static final String API_TAG_USER = "User API";
+    public static final String API_DESCRIPTION_USER = "Управление пользователями системы";
 
 }

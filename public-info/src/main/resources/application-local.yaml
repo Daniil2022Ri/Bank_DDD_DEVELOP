@@ -14,9 +14,9 @@ management:
         include: '*'
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/postgres
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: password
+    password: 1111
   liquibase:
     default-schema: public_info
     change-log: db/changelog/db.changelog-master.yaml
@@ -24,3 +24,12 @@ spring:
     drop-first: false
   application:
     name: public-info-app
+
+jwt:
+  secret: secret
+  lifetime: 1800000
+
+swagger:
+  server:
+    url: http://localhost:8091
+    description: Public Info Service

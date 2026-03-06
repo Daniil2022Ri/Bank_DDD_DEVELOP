@@ -1,5 +1,6 @@
 package com.bank.account.service;
 
+import com.bank.account.dto.AccountDto;
 import com.bank.account.dto.AuditDto;
 import com.bank.account.entity.AccountEntity;
 import com.bank.account.entity.AuditEntity;
@@ -13,17 +14,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class AuditServiceImplTest {
 
     private static final Long TEST_AUDIT_ID = 1L;
@@ -83,7 +80,7 @@ class AuditServiceImplTest {
     @Test
     @DisplayName("Build audit DTO - should build create audit DTO when method is create")
     void buildAuditDto_ShouldBuildCreateAuditDto_WhenMethodIsCreate() {
-        AccountEntity account = createTestAccountEntity();
+        AccountDto account = createTestAccountDto();
 
         AuditDto result = auditService.buildAuditDto(account, TEST_CREATE_METHOD, TEST_CURRENT_USER);
 
@@ -99,7 +96,7 @@ class AuditServiceImplTest {
     @Test
     @DisplayName("Build audit DTO - should build update audit DTO when method is update")
     void buildAuditDto_ShouldBuildUpdateAuditDto_WhenMethodIsUpdate() {
-        AccountEntity account = createTestAccountEntity();
+        AccountDto account = createTestAccountDto();
 
         AuditDto result = auditService.buildAuditDto(account, TEST_UPDATE_METHOD, TEST_CURRENT_USER);
 
@@ -115,7 +112,7 @@ class AuditServiceImplTest {
     @Test
     @DisplayName("Build audit DTO - should handle different operation types correctly")
     void buildAuditDto_ShouldHandleDifferentOperationTypes() {
-        AccountEntity account = createTestAccountEntity();
+        AccountDto account = createTestAccountDto();
 
         AuditDto createResult = auditService.buildAuditDto(account, TEST_CREATE_METHOD, TEST_CURRENT_USER);
         assertEquals(TEST_OPERATION_TYPE_CREATE, createResult.getOperationType());
@@ -153,6 +150,18 @@ class AuditServiceImplTest {
 
     private AccountEntity createTestAccountEntity() {
         return AccountEntity.builder()
+                .id(TEST_ACCOUNT_ID)
+                .accountNumber(TEST_ACCOUNT_NUMBER)
+                .bankDetailsId(TEST_BANK_DETAILS_ID)
+                .money(TEST_MONEY_AMOUNT)
+                .negativeBalance(TEST_NEGATIVE_BALANCE)
+                .passportId(TEST_PASSPORT_ID)
+                .profileId(TEST_PROFILE_ID)
+                .build();
+    }
+
+    private AccountDto createTestAccountDto() {
+        return AccountDto.builder()
                 .id(TEST_ACCOUNT_ID)
                 .accountNumber(TEST_ACCOUNT_NUMBER)
                 .bankDetailsId(TEST_BANK_DETAILS_ID)

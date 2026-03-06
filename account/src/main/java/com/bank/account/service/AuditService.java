@@ -1,9 +1,9 @@
 package com.bank.account.service;
 
+import com.bank.account.dto.AccountDto;
 import com.bank.account.dto.AuditDto;
-import com.bank.account.entity.AccountEntity;
 
 public interface AuditService {
     AuditDto save(AuditDto auditDto);
-    AuditDto buildAuditDto(AccountEntity account, String operationType, String currentUser);
+    AuditDto buildAuditDto(AccountDto account, String operationType, String currentUser);
 }

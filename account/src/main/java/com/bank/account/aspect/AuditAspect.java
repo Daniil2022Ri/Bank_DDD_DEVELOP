@@ -1,7 +1,7 @@
 package com.bank.account.aspect;
 
+import com.bank.account.dto.AccountDto;
 import com.bank.account.dto.AuditDto;
-import com.bank.account.entity.AccountEntity;
 import com.bank.account.service.AuditService;
 import com.bank.account.service.CurrentUserService;
 import com.bank.account.util.ApplicationConstants;
@@ -32,7 +32,7 @@ public class AuditAspect {
             String methodName = joinPoint.getSignature().getName();
             String currentUser = currentUserService.getCurrentUser();
 
-            if (result instanceof AccountEntity account) {
+            if (result instanceof AccountDto account) {
                 AuditDto auditDto = auditService.buildAuditDto(account, methodName, currentUser);
                 auditService.save(auditDto);
 

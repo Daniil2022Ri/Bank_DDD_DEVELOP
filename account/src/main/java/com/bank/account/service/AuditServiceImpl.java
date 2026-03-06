@@ -1,7 +1,7 @@
 package com.bank.account.service;
 
+import com.bank.account.dto.AccountDto;
 import com.bank.account.dto.AuditDto;
-import com.bank.account.entity.AccountEntity;
 import com.bank.account.entity.AuditEntity;
 import com.bank.account.mapper.AuditMapper;
 import com.bank.account.repository.AuditRepository;
@@ -40,7 +40,7 @@ public class AuditServiceImpl implements AuditService {
     }
 
     @Override
-    public AuditDto buildAuditDto(AccountEntity account, String methodName, String currentUser) {
+    public AuditDto buildAuditDto(AccountDto account, String methodName, String currentUser) {
         OperationType operationType = CREATE_METHOD.equals(methodName) ?
                 OperationType.CREATE : OperationType.UPDATE;
 
