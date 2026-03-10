@@ -12,6 +12,9 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
+import static com.bank.account.util.ApplicationConstants.AUDIT_ERROR_FORMAT;
+import static com.bank.account.util.ApplicationConstants.AUDIT_LOGGED_FORMAT;
+
 @Aspect
 @Component
 @Slf4j
@@ -35,14 +38,13 @@ public class AuditAspect {
             if (result instanceof AccountDto account) {
                 AuditDto auditDto = auditService.buildAuditDto(account, methodName, currentUser);
                 auditService.save(auditDto);
-
-                log.info(constants.AUDIT_LOGGED_FORMAT,
-                        methodName, account.getId());
-            }else if(result != null){
+                log.info(AUDIT_LOGGED_FORMAT, methodName.toUpperCase(), account.getId());
+            } else if (result != null) {
                 log.warn("Unexpected result type in audit aspect: {}", result.getClass().getName());
             }
         } catch (Exception e) {
-            log.error(constants.AUDIT_ERROR_FORMAT, e.getMessage(), e);
+            log.error(AUDIT_ERROR_FORMAT, e.getMessage(), e);
+
         }
     }
 }

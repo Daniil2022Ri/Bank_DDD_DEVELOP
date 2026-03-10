@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: account-logs-pvc
-  namespace: bank
+  namespace: account
 spec:
   accessModes:
     - ReadWriteOnce

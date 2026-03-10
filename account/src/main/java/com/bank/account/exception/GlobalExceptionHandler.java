@@ -1,6 +1,5 @@
 package com.bank.account.exception;
 
-import com.bank.account.util.ApplicationConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,16 +10,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import static com.bank.account.util.ApplicationConstants.*;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-
-    private final ApplicationConstants constants;
-
-    public GlobalExceptionHandler(ApplicationConstants constants) {
-        this.constants = constants;
-    }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleEntityNotFound(EntityNotFoundException ex) {
@@ -29,7 +23,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.NOT_FOUND.value())
-                .error(constants.ERROR_NOT_FOUND)
+                .error(ERROR_NOT_FOUND)
                 .message(ex.getMessage())
                 .build();
 
@@ -51,7 +45,7 @@ public class GlobalExceptionHandler {
         ValidationErrorResponse errorResponse = ValidationErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
-                .error(constants.ERROR_VALIDATION_FAILED)
+                .error(ERROR_VALIDATION_FAILED)
                 .message("Input validation failed")
                 .errors(errors)
                 .build();
@@ -66,7 +60,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
-                .error(constants.ERROR_BAD_REQUEST)
+                .error(ERROR_BAD_REQUEST)
                 .message(ex.getMessage())
                 .build();
 
@@ -80,8 +74,8 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error(constants.ERROR_INTERNAL_SERVER_ERROR)
-                .message(constants.ERROR_UNEXPECTED_ERROR)
+                .error(ERROR_INTERNAL_SERVER_ERROR)
+                .message(ERROR_UNEXPECTED_ERROR)
                 .build();
 
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
